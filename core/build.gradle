@@ -193,6 +193,7 @@ spotless {
         importOrder(
                 'tech.fastj',
                 'tech.fastj.feature',
+                'tech.fastj.thread',
                 'java',
                 '\\#'
         )
