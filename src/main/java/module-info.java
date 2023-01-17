@@ -80,6 +80,12 @@ module fastj.library {
     exports tech.fastj.logging;
     exports tech.fastj.math;
 
+    exports tech.fastj.asset;
+    exports tech.fastj.asset.event;
+    exports tech.fastj.asset.sprite;
+    exports tech.fastj.asset.old.image;
+    exports tech.fastj.asset.old.image.sprite;
+
     exports tech.fastj.graphics;
     exports tech.fastj.graphics.dialog;
     exports tech.fastj.graphics.display;
@@ -114,4 +120,5 @@ module fastj.library {
     exports tech.fastj.animation.sprite.event;
     exports tech.fastj.gameloop;
     exports tech.fastj.gameloop.event;
+    exports tech.fastj.asset.old;
 }

@@ -1,11 +1,11 @@
 package tech.fastj.graphics.game;
 
 import tech.fastj.animation.sprite.SpriteAnimData;
+import tech.fastj.asset.old.image.sprite.SpriteOldAsset;
 import tech.fastj.engine.FastJEngine;
 import tech.fastj.gameloop.CoreLoopState;
 import tech.fastj.math.Pointf;
 import tech.fastj.math.Transform2D;
-import tech.fastj.resources.images.ImageResource;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class Sprite2DBuilder {
 
-    private final ImageResource spriteResource;
+    private final SpriteOldAsset spriteAsset;
     private final Map<String, SpriteAnimData> animationDataMap;
     private final boolean shouldRender;
 
@@ -28,10 +28,12 @@ public class Sprite2DBuilder {
     private float rotation = Transform2D.DefaultRotation;
     private Pointf scale = Transform2D.DefaultScale.copy();
 
-    Sprite2DBuilder(ImageResource spriteResource, boolean shouldRender) {
-        this.spriteResource = Objects.requireNonNull(spriteResource, "The sprite resource instance must not be null.");
+    Sprite2DBuilder(SpriteOldAsset spriteAsset, boolean shouldRender) {
+        this.spriteAsset = Objects.requireNonNull(spriteAsset, "The spriteImage asset instance must not be null.");
         this.shouldRender = shouldRender;
         this.animationDataMap = new LinkedHashMap<>();
+
+        withAnimationData(spriteAsset.getSpriteAnimData());
     }
 
     public Sprite2DBuilder withImageCount(int horizontalImageCount, int verticalImageCount) {
@@ -53,7 +55,7 @@ public class Sprite2DBuilder {
             throw new IllegalArgumentException("The starting frame value must be at least 0.");
         }
         if (startingFrame >= (horizontalImageCount * verticalImageCount)) {
-            throw new IllegalArgumentException("The starting frame value must not be more than the amount of sprite images.");
+            throw new IllegalArgumentException("The starting frame value must not be more than the amount of spriteImage images.");
         }
 
         this.startingFrame = startingFrame;
@@ -106,7 +108,7 @@ public class Sprite2DBuilder {
     }
 
     public Sprite2D build() {
-        Sprite2D sprite2D = (Sprite2D) new Sprite2D(spriteResource, horizontalImageCount, verticalImageCount, animationDataMap)
+        Sprite2D sprite2D = (Sprite2D) new Sprite2D(spriteAsset, horizontalImageCount, verticalImageCount, animationDataMap)
             .setCurrentFrame(startingFrame)
             .setAnimationFPS(animationFPS)
             .setCurrentAnimation(startingAnimation)

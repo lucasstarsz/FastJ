@@ -1,8 +1,11 @@
 package tech.fastj.input.mouse;
 
 import tech.fastj.engine.FastJEngine;
+import tech.fastj.gameloop.event.EventObserver;
 import tech.fastj.graphics.Drawable;
 import tech.fastj.graphics.display.Display;
+import tech.fastj.input.keyboard.Keyboard;
+import tech.fastj.input.keyboard.Keys;
 import tech.fastj.input.mouse.events.MouseActionEvent;
 import tech.fastj.input.mouse.events.MouseButtonEvent;
 import tech.fastj.input.mouse.events.MouseMotionEvent;
@@ -318,6 +321,34 @@ public class Mouse implements MouseListener, MouseMotionListener, MouseWheelList
     private static void createSleeperThread(MouseAction e) {
         e.recentAction = true;
         mouseExecutor.schedule(() -> e.recentAction = false, 50, TimeUnit.MILLISECONDS);
+    }
+
+    public static void bindButton(EventObserver<MouseButtonEvent> eventObserver, MouseAction mouseButtonAction, int mouseButton, Keys... otherKeys) {
+        switch (mouseButtonAction) {
+            case Move, Drag, WheelScroll, Enter, Exit -> {
+                throw new IllegalArgumentException("Invalid mouse button action " + mouseButtonAction);
+            }
+            default -> {
+            }
+        }
+
+        FastJEngine.getGameLoop().addEventObserver(
+            MouseButtonEvent.class,
+            (MouseBinding<MouseButtonEvent>) event -> {
+                if (event.getMouseButton() != mouseButton || event.getEventType() == mouseButtonAction) {
+                    return false;
+                }
+
+                for (Keys key : otherKeys) {
+                    if (Keyboard.isKeyDown(key)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            },
+            eventObserver
+        );
     }
 
     /** Resets the {@link Mouse}, preparing it for re-use. */

@@ -1,6 +1,7 @@
 package tech.fastj.input.keyboard;
 
 import tech.fastj.engine.FastJEngine;
+import tech.fastj.gameloop.event.EventObserver;
 import tech.fastj.input.keyboard.events.KeyboardActionEvent;
 import tech.fastj.input.keyboard.events.KeyboardStateEvent;
 import tech.fastj.input.keyboard.events.KeyboardTypedEvent;
@@ -261,6 +262,46 @@ public class Keyboard implements KeyListener {
     /** {@return the set of {@link Keys keys} currently pressed down} */
     public static Set<Keys> getKeysDown() {
         return Collections.unmodifiableSet(AllKeysDown);
+    }
+
+    public static void bindPress(EventObserver<KeyboardStateEvent> eventObserver, Keys primaryKey, Keys... otherKeys) {
+        FastJEngine.getGameLoop().addEventObserver(
+            KeyboardStateEvent.class,
+            (KeyboardBinding<KeyboardStateEvent>) event -> {
+                if (event.getKey() != primaryKey || event.getRawEvent().getID() != KeyEvent.KEY_PRESSED) {
+                    return false;
+                }
+
+                for (Keys key : otherKeys) {
+                    if (!isKeyDown(key)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            },
+            eventObserver
+        );
+    }
+
+    public static void bindRelease(EventObserver<KeyboardStateEvent> eventObserver, Keys primaryKey, Keys... otherKeys) {
+        FastJEngine.getGameLoop().addEventObserver(
+            KeyboardStateEvent.class,
+            (KeyboardBinding<KeyboardStateEvent>) event -> {
+                if (event.getKey() != primaryKey || event.getRawEvent().getID() != KeyEvent.KEY_RELEASED) {
+                    return false;
+                }
+
+                for (Keys key : otherKeys) {
+                    if (isKeyDown(key)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            },
+            eventObserver
+        );
     }
 
     /** Stops the keyboard entirely. */
